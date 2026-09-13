@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: finance_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prod_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-finance_db}
+    volumes:
+      - prod_pgdata:/var/lib/postgresql/data
+    networks:
+      - finance-prod-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: levithunderstorm/finance-backend:latest
+    container_name: finance_backend_prod
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-prod_secure_password}@db:5432/${POSTGRES_DB:-finance_db}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - finance-prod-net
+
+  frontend:
+    image: levithunderstorm/finance-frontend:latest
+    container_name: finance_frontend_prod
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - finance-prod-net
+
+volumes:
+  prod_pgdata:
+
+networks:
+  finance-prod-net:
+    driver: bridge

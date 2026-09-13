@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: finance_db_dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: finance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - dev_pgdata:/var/lib/postgresql/data
+    networks:
+      - finance-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d finance_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: finance_backend_dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres_password@db:5432/finance_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - finance-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: finance_frontend_dev
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/src:/usr/share/nginx/html
+    depends_on:
+      - backend
+    networks:
+      - finance-net
+
+volumes:
+  dev_pgdata:
+
+networks:
+  finance-net:
+    driver: bridge
