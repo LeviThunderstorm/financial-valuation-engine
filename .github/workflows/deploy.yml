@@ -51,8 +51,9 @@ jobs:
       - name: Run Basic Health Import Check
         env:
           DATABASE_URL: postgresql://postgres:postgres_password@localhost:5432/finance_db_test
+          PYTHONPATH: backend
         run: |
-          python -c "from backend.app.main import app; print('App imported successfully!')"
+          python -c "from app.main import app; print('App imported successfully!')"
 
   # ==========================================
   # JOB 2: Build & Push Docker Images
