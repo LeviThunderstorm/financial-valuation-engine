@@ -1,8 +1,8 @@
 
 # Real-Time Financial Valuation & Equity Analytics Engine
 
-![CI/CD Pipeline](https://github.com/<your-github-username>/finance-analytics-engine/actions/workflows/deploy.yml/badge.svg)
-![Docker Pulls](https://img.shields.io/docker/pulls/<your-dockerhub-username>/finance-backend?color=blue&label=Docker%20Hub)
+![CI/CD Pipeline](https://github.com/levithunderstorm/finance-analytics-engine/actions/workflows/deploy.yml/badge.svg)
+![Docker Pulls](https://img.shields.io/docker/pulls/levithunderstorm/finance-backend?color=blue&label=Docker%20Hub)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A production-grade, 3-tier microservice platform for real-time equity analytics and Discounted Cash Flow (DCF) valuation logging. Designed with modern DevOps practices featuring multi-stage Docker containerization, dynamic reverse proxying via Nginx, persistent relational data management, and an automated GitHub Actions CI/CD pipeline building to Docker Hub.
